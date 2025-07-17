@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emily's Blood Sugar & Insulin Tracker</title>
+    <link href="/Styles/page.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
+          rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🩸Emily's Blood Sugar & Insulin Regulator</h1>
+    </div>
+
+    <div class="main-grid">
+        <div class="card">
+            <h2><span class="emoji">🩸</span>Blood Sugar Monitor</h2>
+            <div class="input-group">
+                <label for="bloodSugar">Current Blood Sugar Level (mg/dL)</label>
+                <input type="number" id="bloodSugar" placeholder="Enter BS Level" min="0">
+            </div>
+            <button class="btn" onclick="checkBloodSugar()">Check Status</button>
+            <div id="bloodSugarResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji">🍎</span>Food Tracker</h2>
+            <div class="input-group">
+                <label for="foodName">Food Name</label>
+                <input type="text" id="foodName" placeholder="Apple, Bread, Rice">
+            </div>
+            <div class="input-group">
+                <label for="carbs">Carbohydrates (g)</label>
+                <input type="number" id="carbs" placeholder="Enter carbs in grams" min="0">
+            </div>
+            <button class="btn" onclick="addFood()">Add Food</button>
+            <button class="btn btn-secondary" onclick="clearAllFoods()">Clear All</button>
+        </div>
+        <div class="card food-items">
+            <h2><span class="emoji">📋</span>Food Items & Insulin</h2>
+            <div id="foodList" class="food-list"></div>
+        </div>
+        <div id="totalSummary" class="total-summary" style="display: none;">
+            <h3>💉 Insulin Summary</h3>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-label">Blood Sugar Regulation</div>
+                    <div class="summary-value" id="bsInsulin">0 units</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Food Items</div>
+                    <div class="summary-value" id="foodInsulin">0 units</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Total Insulin Needed</div>
+                    <div class="summary-value" id="totalInsulin">0 units</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script>
+    let foodItems = [];
+    let currentBloodSugar = 0;
+
+    function regulateSugar(bloodSugar) {
+        if (bloodSugar < 70) {
+            return -1; // Sugar Low
+        } else if (bloodSugar >= 70 && bloodSugar <= 139) {
+            return 0; // Normal
+        } else if (bloodSugar >= 140 && bloodSugar <= 179) {
+            return 0.5;
+        } else if (bloodSugar >= 180 && bloodSugar <= 219) {
+            return 1;
+        } else if (bloodSugar >= 220 && bloodSugar <= 259) {
+            return 1.5;
+        } else if (bloodSugar >= 260 && bloodSugar <= 299) {
+            return 2;
+        } else if (bloodSugar >= 300 && bloodSugar <= 339) {
+            return 2.5;
+        } else if (bloodSugar >= 340 && bloodSugar <= 379) {
+            return 3;
+        } else if (bloodSugar >= 380 && bloodSugar <= 419) {
+            return 3.5;
+        } else if (bloodSugar >= 420 && bloodSugar <= 459) {
+            return 4;
+        } else if (bloodSugar >= 460 && bloodSugar <= 499) {
+            return 4.5;
+        } else if (bloodSugar >= 500 && bloodSugar <= 539) {
+            return 5;
+        } else {
+            return -999; // Invalid BS Level
+        }
+    }
+
+    function calculateFoodInsulin(carbs) {
+        if (carbs === 0) {
+            return 0;
+        } else if (carbs > 0 && carbs <= 6) {
+            return 0.5;
+        } else if (carbs > 6 && carbs <= 12) {
+            return 1;
+        } else if (carbs > 12 && carbs <= 18) {
+            return 1.5;
+        } else if (carbs > 18 && carbs <= 24) {
+            return 2;
+        } else if (carbs > 24 && carbs <= 30) {
+            return 2.5;
+        } else if (carbs > 30 && carbs <= 36) {
+            return 3;
+        } else if (carbs > 36 && carbs <= 42) {
+            return 3.5;
+        } else if (carbs > 42 && carbs <= 48) {
+            return 4;
+        } else if (carbs > 48 && carbs <= 54) {
+            return 4.5;
+        } else if (carbs > 54 && carbs <= 60) {
+            return 5.5;
+        } else if (carbs > 66 && carbs <= 72) {
+            return 6;
+        } else if (carbs > 72 && carbs <= 78) {
+            return 6.5;
+        } else if (carbs > 78 && carbs <= 84) {
+            return 7;
+        } else if (carbs > 84 && carbs <= 90) {
+            return 7.5;
+        } else if (carbs > 90 && carbs <= 96) {
+            return 8;
+        } else if (carbs > 96 && carbs <= 102) {
+            return 8.5;
+        } else {
+            return 9;
+        }
+    }
+
+    function checkBloodSugar() {
+        const bloodSugar = parseFloat(document.getElementById('bloodSugar').value);
+        const resultDiv = document.getElementById('bloodSugarResult');
+
+        if (isNaN(bloodSugar) || bloodSugar <= 0) {
+            resultDiv.innerHTML = "❗ Enter a valid blood sugar level";
+            resultDiv.className = "result danger";
+            resultDiv.style.display = "block";
+            return;
+        }
+
+        currentBloodSugar = bloodSugar;
+        const units = regulateSugar(bloodSugar);
+
+        if (units === -1) {
+            resultDiv.innerHTML = "⚠️ Blood sugar is too low! Eat a snack to raise it.";
+            resultDiv.className = "result danger";
+        } else if (units === 0) {
+            resultDiv.innerHTML = "✅ Blood sugar is normal. No insulin needed.";
+            resultDiv.className = "result normal";
+        } else if (units > 0) {
+            resultDiv.innerHTML = `💉 Insulin needed: ${units} units`;
+            resultDiv.className = "result warning";
+        } else {
+            resultDiv.innerHTML = "❗ Invalid Blood Sugar Level";
+            resultDiv.className = "result danger";
+        }
+
+        resultDiv.style.display = "block";
+        updateSummary();
+    }
+
+    function addFood() {
+        const name = document.getElementById('foodName').value.trim();
+        const carbs = parseFloat(document.getElementById('carbs').value);
+
+        if (!name || isNaN(carbs) || carbs < 0 ) {
+            alert('Please fill in both fields');
+            return;
+        }
+
+        const insulin = calculateFoodInsulin(carbs);
+        const foodItem = {
+            id: Date.now(),
+            name: name,
+            carbs: carbs,
+            insulin: insulin
+        };
+        foodItems.push(foodItem);
+
+        document.getElementById('foodName').value = '';
+        document.getElementById('carbs').value = '';
+
+        renderFoodList();
+        updateSummary();
+    }
+
+    function removeFood(id) {
+        foodItems = foodItems.filter(item => item.id !== id);
+        renderFoodList();
+        updateSummary();
+    }
+
+    function clearAllFoods() {
+        foodItems = [];
+        renderFoodList();
+        updateSummary();
+    }
+
+    function renderFoodList() {
+        const foodList = document.getElementById('foodList');
+
+        if (foodItems.length === 0) {
+            foodList.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No food items added yet. Add foods to calculate insulin needed</p>';
+            return;
+        }
+
+        foodList.innerHTML = foodItems.map(item => `
+                <div class="food-item">
+                    <div class="food-info">
+                        <div class="food-name">${item.name}</div>
+                        <div class="food-details">${item.carbs}g carbs</div>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <div class="food-insulin">${item.insulin} units</div>
+                        <button class="remove-btn" onclick="removeFood(${item.id})">×</button>
+                    </div>
+                </div>
+            `).join('');
+    }
+
+    function updateSummary() {
+        const summaryDiv = document.getElementById('totalSummary');
+
+        if (foodItems.length === 0 && currentBloodSugar === 0) {
+            summaryDiv.style.display = 'none';
+            return;
+        }
+
+        const bsInsulin = currentBloodSugar > 0 ? Math.max(0, regulateSugar(currentBloodSugar)) : 0;
+        const foodInsulin = foodItems.reduce((total, item) => total + item.insulin, 0);
+        const totalInsulin = bsInsulin + foodInsulin;
+
+        document.getElementById('bsInsulin').textContent = `${bsInsulin} units`;
+        document.getElementById('foodInsulin').textContent = `${foodInsulin} units`;
+        document.getElementById('totalInsulin').textContent = `${totalInsulin} units`;
+
+        summaryDiv.style.display = 'block';
+    }
+    renderFoodList();
+</script>
+</body>
+</html>
