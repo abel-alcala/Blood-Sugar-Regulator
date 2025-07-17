@@ -1,0 +1,26 @@
+{
+  "name": "blood-sugar-regulator",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/abel-alcala/Blood-Sugar-Regulator#readme",
+  "bugs": {
+    "url": "https://github.com/abel-alcala/Blood-Sugar-Regulator/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abel-alcala/Blood-Sugar-Regulator.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server dist -p 3000",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx vite",
+    "build": "npx tsc && npx vite build"
+  },
+  "dependencies": {
+    "vite": "^7.0.5"
+  }
+}
