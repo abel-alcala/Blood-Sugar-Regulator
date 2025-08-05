@@ -3,7 +3,7 @@
     --secondary: #e28dab;
     --tertiary: #f4c9d8;
     --primary-accent: #fff3f7;
-    --color-background-page: #4a2b34;
+    --color-background-page: #E997AB;
     --color-background-header: #2a1c20;
     --color-text-header: #fbeff2;
     --color-text: #f3dae1;
@@ -63,7 +63,7 @@ body {
     font-size: var(--font-size-xl);
     font-weight: 800;
     margin-bottom: 10px;
-    background: var(--color-text-header);
+    background: var(--color-text-inverted);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

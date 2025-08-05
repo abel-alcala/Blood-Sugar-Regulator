@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emily's Blood Sugar & Insulin Tracker</title>
-    <link href="./page.css" rel="stylesheet">
+    <link href="page.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
@@ -25,6 +25,39 @@
             </div>
             <button class="btn" onclick="checkBloodSugar()">Check Status</button>
             <div id="bloodSugarResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji">🎯</span>Blood Sugar Setter</h2>
+            <div class="input-group">
+                <label>Set Blood Sugar Level (mg/dL)</label>
+                <div class="number-display">
+                    <span id="displayValue">000</span> mg/dL
+                </div>
+                <div class="digit-controls">
+                    <div class="digit-group">
+                        <label>Hundreds</label>
+                        <button class="digit-btn" onclick="adjustDigit('hundreds', 1)">+</button>
+                        <span id="hundreds">0</span>
+                        <button class="digit-btn" onclick="adjustDigit('hundreds', -1)">-</button>
+                    </div>
+                    <div class="digit-group">
+                        <label>Tens</label>
+                        <button class="digit-btn" onclick="adjustDigit('tens', 1)">+</button>
+                        <span id="tens">0</span>
+                        <button class="digit-btn" onclick="adjustDigit('tens', -1)">-</button>
+                    </div>
+                    <div class="digit-group">
+                        <label>Ones</label>
+                        <button class="digit-btn" onclick="adjustDigit('ones', 1)">+</button>
+                        <span id="ones">0</span>
+                        <button class="digit-btn" onclick="adjustDigit('ones', -1)">-</button>
+                    </div>
+                </div>
+            </div>
+            <button class="btn" onclick="setBloodSugar()">Set & Check Status</button>
+            <button class="btn btn-secondary" onclick="resetDigits()">Reset</button>
+            <div id="bloodSugarResult2" class="result" style="display: none;"></div>
         </div>
 
         <div class="card">
