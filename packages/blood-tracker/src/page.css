@@ -47,6 +47,8 @@
     padding: 25px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .card:hover {
@@ -57,7 +59,7 @@
 .card-title {
     color: #4a2b34;
     margin-bottom: 20px;
-    font-size: 1.5rem;
+    font-size: 1.9rem;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -67,10 +69,6 @@
     font-size: 2.5rem;
 }
 
-.form-group {
-    margin-bottom: 20px;
-    margin-top: 10px;
-}
 
 .form-label {
     display: block;
@@ -132,8 +130,10 @@
 }
 
 .button-group {
-    display: flex;
     gap: 10px;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
 }
 
 .alert {
@@ -165,17 +165,19 @@
 
 .digit-display {
     text-align: center;
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: bold;
     margin: 20px 0;
     color: #4a2b34;
+    width: 100%;
+    align-content: center;
+
 }
 
 .digit-controls {
     display: flex;
     justify-content: space-around;
     gap: 10px;
-
 }
 
 .digit-control {
@@ -188,23 +190,23 @@
 }
 
 .digit-label {
-    font-size: 0.9em;
+    font-size: 1.1em;
     color: #666;
 }
 
 .digit-buttons {
     margin: 10px 0;
     display: flex;
-    width: 75%;
+    width: 100%;
     flex-direction: column;
     align-items: center;
 }
 
 .digit-btn {
-    background: #c1507e;
-    color: white;
-    padding: 9px 10px;
-    width: 100%;
+    border-color: #93345b;
+    color: #c1507e;
+    max-width: 50%;
+    max-height: 50%;
     border-radius: 5px;
     cursor: pointer;
     margin: 2px;
@@ -213,15 +215,15 @@
 }
 
 .digit-btn:hover {
-    background: #a54468;
+    color: #7e2240;
 }
 
 .digit-value {
     width: 30px;
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 3rem;
     font-weight: bold;
-
+    margin-bottom: -10px;
 }
 
 .food-list-card {
@@ -239,6 +241,7 @@
     text-align: center;
     color: #666;
     padding: 20px;
+    font-size: 1.2em;
 }
 
 .food-item {
@@ -312,7 +315,7 @@
 
 .summary-title {
     margin-bottom: 15px;
-    font-size: 1.4em;
+    font-size: 1.8em;
 }
 
 .summary-grid {
