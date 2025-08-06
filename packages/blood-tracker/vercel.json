@@ -1,0 +1,19 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)\\.jsx",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)\\.jsx",
+      "destination": "/$1.js"
+    }
+  ]
+}
