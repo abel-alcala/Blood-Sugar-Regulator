@@ -349,6 +349,7 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
+
 }
 
 .barcode-scanner:hover {
@@ -654,5 +655,9 @@
 
     .tracker-container {
         padding: 20px;
+    }
+
+    .grid-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, .75fr));
     }
 }

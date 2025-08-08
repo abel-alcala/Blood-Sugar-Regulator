@@ -408,7 +408,7 @@ export default function BarcodeScanner({ onAddFood, calculateFoodInsulin: calcFn
                 <div className="barcode-group">
 
                     <div className="scanner-controls">
-                        <button
+                        {/*<button
                             onClick={() => (scanning ? stopCamera() : startCamera())}
                             className={`btn ${scanning ? 'btn-danger' : 'btn-primary'}`}
                         >
@@ -416,7 +416,7 @@ export default function BarcodeScanner({ onAddFood, calculateFoodInsulin: calcFn
                         </button>
                         <span className="scanner-status">
                     {supportedDetector ? "(camera scan may be available)" : "(camera may be limited)"}
-                </span>
+                </span>*/}
                     </div>
 
                     {scanning && (
