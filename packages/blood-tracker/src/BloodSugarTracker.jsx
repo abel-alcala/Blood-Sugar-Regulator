@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './page.css';
+import BarcodeScanner from "./BarcodeScanner";
 
 
 const BloodSugarTracker = () => {
@@ -61,43 +62,11 @@ const BloodSugarTracker = () => {
     };
 
     const calculateFoodInsulin = (carbs) => {
-        if (carbs === 0) {
-            return 0;
-        } else if (carbs > 0 && carbs <= 6) {
-            return 0.5;
-        } else if (carbs > 6 && carbs <= 12) {
-            return 1;
-        } else if (carbs > 12 && carbs <= 18) {
-            return 1.5;
-        } else if (carbs > 18 && carbs <= 24) {
-            return 2;
-        } else if (carbs > 24 && carbs <= 30) {
-            return 2.5;
-        } else if (carbs > 30 && carbs <= 36) {
-            return 3;
-        } else if (carbs > 36 && carbs <= 42) {
-            return 3.5;
-        } else if (carbs > 42 && carbs <= 48) {
-            return 4;
-        } else if (carbs > 48 && carbs <= 54) {
-            return 4.5;
-        } else if (carbs > 54 && carbs <= 60) {
-            return 5.5;
-        } else if (carbs > 66 && carbs <= 72) {
-            return 6;
-        } else if (carbs > 72 && carbs <= 78) {
-            return 6.5;
-        } else if (carbs > 78 && carbs <= 84) {
-            return 7;
-        } else if (carbs > 84 && carbs <= 90) {
-            return 7.5;
-        } else if (carbs > 90 && carbs <= 96) {
-            return 8;
-        } else if (carbs > 96 && carbs <= 102) {
-            return 8.5;
-        } else {
-            return 9;
-        }
+        const c = Number(carbs) || 0;
+        if (c <= 0) return 0;
+        const units = c / 12;
+        const rounded = Math.round(units * 2) / 2;
+        return parseFloat(rounded.toFixed(1));
     };
 
     const getAlertClass = (type) => {
@@ -261,6 +230,7 @@ const BloodSugarTracker = () => {
         <div className="blood-sugar-tracker">
             <div className="tracker-container">
                 <div className="header">
+                    {/*<img src={emily} alt="Emily"/>*/}
                     <h1>🩸Emily's Blood Sugar & Insulin Regulator</h1>
                 </div>
 
@@ -466,15 +436,32 @@ const BloodSugarTracker = () => {
                             className="form-input"
                         />
                         <div className="button-group">
-                            <button onClick={addFood} className="btn btn-primary">
+                            <button
+                                onClick={addFood}
+                                className="btn btn-primary"
+                                disabled={!foodName.trim() || Number.isNaN(Number(carbs)) || Number(carbs) < 0}
+                            >
                                 Add Food
                             </button>
+
                             <button onClick={clearAllFoods} className="btn btn-secondary">
                                 Clear All
                             </button>
                         </div>
                     </div>
 
+                    <div className="card food-list-card">
+                    <BarcodeScanner
+                        onAddFood={(foodItem) => {
+                            addFood({
+                                name: foodItem.name,
+                                carbs: foodItem.carbs,
+                                insulin: foodItem.insulin,
+                            });
+                        }}
+                        calculateFoodInsulin={calculateFoodInsulin}
+                    />
+                    </div>
 
                     {/* Food Items List */}
                     <div className="card food-list-card">
