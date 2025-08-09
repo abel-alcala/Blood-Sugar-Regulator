@@ -494,7 +494,6 @@
 
 .product-details {
     flex: 1;
-    min-width: 280px;
 }
 .product-header {
     display: flex;
@@ -530,7 +529,6 @@
     display: flex;
     gap: 12px;
     flex-direction: row;
-    justify-content: space-evenly;
     flex-wrap: wrap;
 }
 
@@ -658,6 +656,6 @@
     }
 
     .grid-container {
-        grid-template-columns: repeat(auto-fit, minmax(300px, .75fr));
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     }
 }
