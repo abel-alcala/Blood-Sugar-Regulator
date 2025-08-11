@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {useEffect, useRef, useState} from "react";
 
-export default function BarcodeScanner({ onAddFood, calculateFoodInsulin: calcFnProp }) {
+export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnProp}) {
     const defaultCalc = (carbs) => {
         const c = Number(carbs) || 0;
         if (c <= 0) return 0;
@@ -8,7 +8,7 @@ export default function BarcodeScanner({ onAddFood, calculateFoodInsulin: calcFn
         return Math.round(units * 2) / 2;
     };
     const calculateFoodInsulin = typeof calcFnProp === "function" ? calcFnProp : defaultCalc;
-
+    const [activeTab, setActiveTab] = useState("");
     const videoRef = useRef(null);
     const streamRef = useRef(null);
     const scanningRef = useRef(false);
@@ -49,8 +49,7 @@ export default function BarcodeScanner({ onAddFood, calculateFoodInsulin: calcFn
         try {
             setStatusMsg("Requesting camera permission...");
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
-                audio: false,
+                video: {facingMode: "environment", width: {ideal: 1280}, height: {ideal: 720}}, audio: false,
             });
             streamRef.current = stream;
             if (videoRef.current) {
@@ -69,7 +68,7 @@ export default function BarcodeScanner({ onAddFood, calculateFoodInsulin: calcFn
             if ("BarcodeDetector" in window) {
                 try {
                     const formats = ["ean_13", "ean_8", "upc_e", "upc_a", "code_128"];
-                    detectorRef.current = new window.BarcodeDetector({ formats });
+                    detectorRef.current = new window.BarcodeDetector({formats});
                 } catch (err) {
                     console.warn("BarcodeDetector init failed:", err);
                     detectorRef.current = null;
@@ -104,7 +103,8 @@ export default function BarcodeScanner({ onAddFood, calculateFoodInsulin: calcFn
         if (videoRef.current) {
             try {
                 videoRef.current.pause();
-            } catch {}
+            } catch {
+            }
             videoRef.current.srcObject = null;
         }
         setStatusMsg("");
@@ -139,8 +139,7 @@ export default function BarcodeScanner({ onAddFood, calculateFoodInsulin: calcFn
                 if (settled) return;
                 settled = true;
                 cleanup();
-                if (videoEl.videoWidth > 0) resolve();
-                else reject(new Error("Timed out waiting for video metadata"));
+                if (videoEl.videoWidth > 0) resolve(); else reject(new Error("Timed out waiting for video metadata"));
             }, timeout);
         });
     }
@@ -244,19 +243,16 @@ export default function BarcodeScanner({ onAddFood, calculateFoodInsulin: calcFn
                 const carbPer100 = rawN["carbohydrates_100g"] || rawN["carbohydrates"];
                 const servingInfo = p.serving_size || "";
                 let carbsServingFinal = 0;
-                if (carbServing) carbsServingFinal = Number(carbServing);
-                else if (carbPer100) {
+                if (carbServing) carbsServingFinal = Number(carbServing); else if (carbPer100) {
                     let gramsPerServing = null;
                     if (servingInfo) {
                         const m = servingInfo.match(/([\d.,]+)\s?g/i);
-                        if (m && m[1]) gramsPerServing = parseFloat(m[1].replace(",", "."));
-                        else {
+                        if (m && m[1]) gramsPerServing = parseFloat(m[1].replace(",", ".")); else {
                             const onlyNum = servingInfo.match(/([\d.,]+)/);
                             if (onlyNum && onlyNum[1]) gramsPerServing = parseFloat(onlyNum[1].replace(",", "."));
                         }
                     }
-                    if (gramsPerServing) carbsServingFinal = (Number(carbPer100) * gramsPerServing) / 100;
-                    else carbsServingFinal = Number(carbPer100);
+                    if (gramsPerServing) carbsServingFinal = (Number(carbPer100) * gramsPerServing) / 100; else carbsServingFinal = Number(carbPer100);
                 } else carbsServingFinal = 0;
 
                 setProduct({
@@ -308,175 +304,147 @@ export default function BarcodeScanner({ onAddFood, calculateFoodInsulin: calcFn
         await handleBarcodeRaw(manualUPC.trim());
     };
 
-    return (
-        <div className="barcode-scanner">
+    return (<div className="barcode-scanner">
+        <div className="card-header">
             <h2 className="card-title">
-                <span className="card-title-icon"></span>Barcode Scanner
+                <span className="card-title-icon"></span>🖼️ Barcode Scanner
             </h2>
+            <div className="scanner-tabs">
+                {/*<button
+                    className={`btn ${activeTab === "camera" ? "btn-primary" : "btn-secondary"}`}
+                    onClick={() => setActiveTab("camera")}
+                >
+                    Camera
+                </button>*/}
+                <button
+                    className={`btn ${activeTab === "upload" ? "btn-primary" : "btn-secondary"}`}
+                    style={{position: 'relative', overflow: 'hidden', padding: '10px'}}
+                >
+                    🖼️ Image
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="upload-button"
+                        onChange={e => {
+                            handleImageUpload(e.target.files && e.target.files[0]);
+                        }}
+                    />
+                </button>
+                <button
+                    className={`btn ${activeTab === "manual" ? "btn-primary" : "btn-secondary"}`}
+                    onClick={() => setActiveTab("manual")}
+                    style={{padding:'10px'}}
+                >
+                    ✏️ Barcode
+                </button>
+            </div>
+        </div>
 
-            <div className="scanner-groups">
-                <div className="product-container">
-                    <div className="product-details">
-                        <div className="product-header">
-                            <div className="product-image">
-                                {product && product.imageUrl ? (
-                                    <img
-                                        src={product.imageUrl}
-                                        alt={product.name}
-                                        className="product-img"
-                                    />
-                                ) : (
-                                    <div className="product-placeholder">
-                                        <span>🍔</span>
-                                        <div>No image</div>
-                                    </div>
-                                )}
+        <div className="scanner-groups">
+            <div className="product-container">
+                <div className="product-details">
+                    <div className="product-header">
+                        <div className="product-image">
+                            {product && product.imageUrl ? (
+                                <img src={product.imageUrl} alt={product.name} className="product-img"/>) : ""}
+                        </div>
+                        <div className="product-title">
+                            <div className="product-name">
+                                {product ? product.name : ""}
                             </div>
-
-                            <div className="product-title">
-                                <div className="product-name">
-                                    {product ? product.name : "No product loaded"}
-                                </div>
-                                <div className="product-brand">
-                                    {product ? (product.brand || "") : "Scan or lookup to load product info."}
-                                </div>
+                            <div className="product-brand">
+                                {product ? (product.brand || "") : ""}
                             </div>
                         </div>
+                    </div>
 
 
-                        <div className="form-group">
-                            <label className="form-label">Serving info</label>
+                    <div className="nutrition-inputs">
+                        <div className="input-group">
+                            <label className="form-label">Carbs per serving (g)</label>
                             <input
-                                type="text"
-                                value={product ? product.serving : servingSize}
-                                onChange={(e) => {
-                                    const v = e.target.value;
-                                    if (product) setProduct({...product, serving: v});
-                                    else setServingSize(v);
-                                }}
-                                placeholder="e.g., 1 bar (30 g)"
+                                type="number"
+                                min="0"
+                                step="0.1"
+                                value={carbsPerServing}
+                                onChange={(e) => setCarbsPerServing(Number(e.target.value))}
                                 className="form-input"
                             />
                         </div>
-
-                        <div className="nutrition-inputs">
-                            <div className="input-group">
-                                <label className="form-label">Carbs per serving (g)</label>
-                                <input
-                                    type="number"
-                                    min="0"
-                                    step="0.1"
-                                    value={carbsPerServing}
-                                    onChange={(e) => setCarbsPerServing(Number(e.target.value))}
-                                    className="form-input"
-                                />
-                            </div>
-                            <div className="input-group">
-                                <label className="form-label">Quantity</label>
-                                <input
-                                    type="number"
-                                    min="0"
-                                    step="0.25"
-                                    value={quantity}
-                                    onChange={(e) => setQuantity(Number(e.target.value))}
-                                    className="form-input quantity-input"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="nutrition-summary">
-                            <div className="nutrition-item">
-                                <strong>Total carbs:</strong> <span className="nutrition-value">{totalCarbs} g</span>
-                            </div>
-                            <div className="nutrition-item">
-                                <strong>Estimated insulin:</strong> <span
-                                className="nutrition-value insulin-units">{insulinUnits} units</span>
-                            </div>
-                        </div>
-
-                        <div className="add-button-container">
-                            <button
-                                onClick={handleAdd}
-                                className="btn btn-primary add-food-btn"
-                                disabled={totalCarbs <= 0}
-                            >
-                                ➕ Add to Food List
-                            </button>
+                        <div className="input-group">
+                            <label className="form-label">Quantity</label>
+                            <input
+                                type="number"
+                                min="0"
+                                step="0.25"
+                                value={quantity}
+                                onChange={(e) => setQuantity(Number(e.target.value))}
+                                className="form-input quantity-input"
+                            />
                         </div>
                     </div>
-                </div>
-                <div className="barcode-group">
 
-                    <div className="scanner-controls">
-                        {/*<button
-                            onClick={() => (scanning ? stopCamera() : startCamera())}
-                            className={`btn ${scanning ? 'btn-danger' : 'btn-primary'}`}
+                    <div className="nutrition-summary">
+                        <div className="nutrition-item">
+                            <strong>Total carbs:</strong> <span className="nutrition-value">{totalCarbs} g</span>
+                        </div>
+                        <div className="nutrition-item">
+                            <strong>Estimated insulin:</strong> <span
+                            className="nutrition-value insulin-units">{insulinUnits} units</span>
+                        </div>
+                    </div>
+
+                    <div className="add-button-container">
+                        <button
+                            onClick={handleAdd}
+                            className="btn btn-primary add-food-btn"
+                            disabled={totalCarbs <= 0}
                         >
-                            {scanning ? "Stop Camera" : "Start Camera Scan"}
+                            ➕ Add to Food List
                         </button>
-                        <span className="scanner-status">
-                    {supportedDetector ? "(camera scan may be available)" : "(camera may be limited)"}
-                </span>*/}
                     </div>
-
-                    {scanning && (
-                        <div className="camera-container">
-                            <video
-                                ref={videoRef}
-                                className="scanner-video"
-                                autoPlay
-                                muted
-                                playsInline
-                            />
-                            <div className="scanner-instruction">
-                                Point camera at barcode to scan
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="upload-section">
-                        <label className="form-label">Upload barcode photo</label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleImageUpload(e.target.files && e.target.files[0])}
-                            className="file-input"
-                        />
-                        {imgUploadPreview && (
-                            <img
-                                src={imgUploadPreview}
-                                alt="preview"
-                                className="upload-preview"
-                            />
-                        )}
-                    </div>
-
-                    <div className="manual-entry">
-                        <label className="form-label">Enter UPC manually</label>
-                        <div className="manual-input-group">
-                            <input
-                                value={manualUPC}
-                                onChange={(e) => setManualUPC(e.target.value)}
-                                placeholder="0123456789012"
-                                className="form-input"
-                            />
-                            <button
-                                onClick={handleManualLookupClick}
-                                className="btn btn-secondary"
-                            >
-                                Lookup
-                            </button>
-                        </div>
-                    </div>
-
-
-                    {statusMsg && (
-                        <div className="status-message" aria-live="polite">
-                            <strong>Status:</strong> <span>{statusMsg}</span>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>
-    );
+
+        <div className="barcode-group">
+            {activeTab === "camera" && (<>
+                {!scanning && (<button
+                    onClick={startCamera}
+                    className="btn btn-primary"
+                >
+                    Start Camera Scan
+                </button>)}
+                {scanning && (<div className="camera-container">
+                    <video ref={videoRef} className="scanner-video" autoPlay muted playsInline/>
+                    <div className="scanner-instruction">
+                        Point camera at barcode to scan
+                    </div>
+                </div>)}
+            </>)}
+
+            {activeTab === "upload" && (<div className="upload-section">
+
+            </div>)}
+
+            {activeTab === "manual" && (<div className="manual-entry">
+                <label className="form-label">Enter UPC manually</label>
+                <div className="manual-input-group">
+                    <input
+                        value={manualUPC}
+                        onChange={(e) => setManualUPC(e.target.value)}
+                        placeholder="0123456789012"
+                        className="form-input"
+                    />
+                    <button onClick={handleManualLookupClick} className="btn btn-secondary">
+                        Lookup
+                    </button>
+                </div>
+            </div>)}
+
+            {statusMsg && (<div className="status-message" aria-live="polite">
+                <strong>Status:</strong> <span>{statusMsg}</span>
+            </div>)}
+        </div>
+    </div>);
 }
