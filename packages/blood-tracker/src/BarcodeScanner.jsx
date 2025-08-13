@@ -10,9 +10,6 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
     const calculateFoodInsulin = typeof calcFnProp === "function" ? calcFnProp : defaultCalc;
     const [activeTab, setActiveTab] = useState("");
     const videoRef = useRef(null);
-    const streamRef = useRef(null);
-    const scanningRef = useRef(false);
-    const rafRef = useRef(null);
     const detectorRef = useRef(null);
     const canvasRef = useRef(null);
 
@@ -43,160 +40,7 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
         setInsulinUnits(Number(calculateFoodInsulin(total)));
     }, [carbsPerServing, quantity, calculateFoodInsulin]);
 
-    useEffect(() => () => stopCamera(), []);
 
-    async function startCamera() {
-        try {
-            setStatusMsg("Requesting camera permission...");
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: {facingMode: "environment", width: {ideal: 1280}, height: {ideal: 720}}, audio: false,
-            });
-            streamRef.current = stream;
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-                videoRef.current.muted = true;
-                videoRef.current.playsInline = true;
-                await waitForVideoToHaveData(videoRef.current);
-                try {
-                    await videoRef.current.play();
-                } catch (err) {
-                    console.warn("video.play() failed:", err);
-                }
-            }
-            setScanning(true);
-            setStatusMsg("Camera active. Initializing scanner...");
-            if ("BarcodeDetector" in window) {
-                try {
-                    const formats = ["ean_13", "ean_8", "upc_e", "upc_a", "code_128"];
-                    detectorRef.current = new window.BarcodeDetector({formats});
-                } catch (err) {
-                    console.warn("BarcodeDetector init failed:", err);
-                    detectorRef.current = null;
-                    setStatusMsg("BarcodeDetector exists but failed to initialize. Use upload/manual fallback.");
-                }
-                if (detectorRef.current) {
-                    startScanLoop();
-                } else {
-                    setStatusMsg("Unavailable: use manual or image upload.");
-                }
-            } else {
-                setStatusMsg("API not supported in this browser. Use manual or image upload");
-            }
-        } catch (err) {
-            console.error("startCamera error:", err);
-            setStatusMsg("Unable to access camera. Check permissions and secure context (https).");
-            stopCamera();
-        }
-    }
-
-    function stopCamera() {
-        setScanning(false);
-        scanningRef.current = false;
-        if (rafRef.current) {
-            cancelAnimationFrame(rafRef.current);
-            rafRef.current = null;
-        }
-        if (streamRef.current) {
-            streamRef.current.getTracks().forEach((t) => t.stop());
-            streamRef.current = null;
-        }
-        if (videoRef.current) {
-            try {
-                videoRef.current.pause();
-            } catch {
-            }
-            videoRef.current.srcObject = null;
-        }
-        setStatusMsg("");
-    }
-
-    function waitForVideoToHaveData(videoEl, timeout = 3000) {
-        return new Promise((resolve, reject) => {
-            if (!videoEl) return reject(new Error("No video element"));
-            if (videoEl.readyState >= 2 && videoEl.videoWidth > 0) return resolve();
-            let settled = false;
-            const onLoaded = () => {
-                if (settled) return;
-                settled = true;
-                cleanup();
-                resolve();
-            };
-            const onError = (ev) => {
-                if (settled) return;
-                settled = true;
-                cleanup();
-                reject(new Error("Video failed to load metadata"));
-            };
-            const cleanup = () => {
-                videoEl.removeEventListener("loadedmetadata", onLoaded);
-                videoEl.removeEventListener("loadeddata", onLoaded);
-                videoEl.removeEventListener("error", onError);
-            };
-            videoEl.addEventListener("loadedmetadata", onLoaded);
-            videoEl.addEventListener("loadeddata", onLoaded);
-            videoEl.addEventListener("error", onError);
-            setTimeout(() => {
-                if (settled) return;
-                settled = true;
-                cleanup();
-                if (videoEl.videoWidth > 0) resolve(); else reject(new Error("Timed out waiting for video metadata"));
-            }, timeout);
-        });
-    }
-
-    function startScanLoop() {
-        if (!videoRef.current || !detectorRef.current) {
-            setStatusMsg("Scanner initialization failed.");
-            return;
-        }
-
-        const v = videoRef.current;
-        const w = v.videoWidth || 640;
-        const h = v.videoHeight || 480;
-        const canvas = document.createElement("canvas");
-        canvas.width = w;
-        canvas.height = h;
-        canvasRef.current = canvas;
-        const ctx = canvas.getContext("2d");
-
-        scanningRef.current = true;
-        setStatusMsg("Scanning for barcode...");
-
-        const loop = async () => {
-            if (!scanningRef.current) return;
-            if (!videoRef.current || videoRef.current.readyState < 2) {
-                rafRef.current = requestAnimationFrame(loop);
-                return;
-            }
-
-            try {
-                ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-                let bitmap;
-                try {
-                    bitmap = await createImageBitmap(canvas);
-                } catch (eBitmap) {
-                    bitmap = canvas;
-                }
-                const results = await detectorRef.current.detect(bitmap);
-                if (results && results.length > 0) {
-                    const raw = results[0].rawValue || results[0].rawText || "";
-                    console.debug("Barcode detected:", raw, results);
-                    setBarcodeValue(raw);
-                    setStatusMsg(`Scanned barcode: ${raw}`);
-                    scanningRef.current = false;
-                    stopCamera();
-                    await handleBarcodeRaw(raw);
-                    return;
-                }
-            } catch (err) {
-                console.debug("Barcode detect error (ignored):", err);
-            }
-
-            rafRef.current = requestAnimationFrame(loop);
-        };
-
-        rafRef.current = requestAnimationFrame(loop);
-    }
 
     async function handleImageUpload(file) {
         if (!file) return;
@@ -214,7 +58,7 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
                     await handleBarcodeRaw(raw);
                     return;
                 } else {
-                    setStatusMsg("No barcode detected in image. You can enter UPC manually.");
+                    setStatusMsg("No barcode found in image. You can enter UPC manually.");
                 }
             } catch (err) {
                 console.warn("Image detect failed:", err);
@@ -310,12 +154,6 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
                 <span className="card-title-icon"></span>🖼️ Barcode Scanner
             </h2>
             <div className="scanner-tabs">
-                {/*<button
-                    className={`btn ${activeTab === "camera" ? "btn-primary" : "btn-secondary"}`}
-                    onClick={() => setActiveTab("camera")}
-                >
-                    Camera
-                </button>*/}
                 <button
                     className={`btn ${activeTab === "upload" ? "btn-primary" : "btn-secondary"}`}
                     style={{position: 'relative', overflow: 'hidden', padding: '10px'}}
@@ -411,21 +249,6 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
         </div>
 
         <div className="barcode-group">
-            {activeTab === "camera" && (<>
-                {!scanning && (<button
-                    onClick={startCamera}
-                    className="btn btn-primary"
-                >
-                    Start Camera Scan
-                </button>)}
-                {scanning && (<div className="camera-container">
-                    <video ref={videoRef} className="scanner-video" autoPlay muted playsInline/>
-                    <div className="scanner-instruction">
-                        Point camera at barcode to scan
-                    </div>
-                </div>)}
-            </>)}
-
             {activeTab === "upload" && (<div className="upload-section">
 
             </div>)}

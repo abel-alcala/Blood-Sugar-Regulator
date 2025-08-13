@@ -88,7 +88,7 @@ const BloodSugarTracker = () => {
         if (isNaN(bs) || bs <= 0) {
             setBloodSugarResult({
                 show: true,
-                message: "❗ Enter a valid blood sugar level",
+                message: "❌ Enter a valid blood sugar level",
                 type: "danger"
             });
             return;
@@ -118,7 +118,7 @@ const BloodSugarTracker = () => {
         } else {
             setBloodSugarResult({
                 show: true,
-                message: "❗ Invalid Blood Sugar Level",
+                message: "❌ Invalid Blood Sugar Level",
                 type: "danger"
             });
         }
@@ -130,7 +130,7 @@ const BloodSugarTracker = () => {
         if (bs <= 0) {
             setBloodSugarResult2({
                 show: true,
-                message: "❗ Enter a valid blood sugar level",
+                message: "❌ Enter a valid blood sugar level",
                 type: "danger"
             });
             return;
@@ -160,7 +160,7 @@ const BloodSugarTracker = () => {
         } else {
             setBloodSugarResult2({
                 show: true,
-                message: "❗ Invalid Blood Sugar Level",
+                message: "❌ Invalid Blood Sugar Level",
                 type: "danger"
             });
         }
@@ -193,10 +193,8 @@ const BloodSugarTracker = () => {
         setBloodSugarResult2({show: false, message: '', type: ''});
     };
 
-
-    const addFood = () => {
-
-
+    // Manual food addition (from the food tracker section)
+    const addManualFood = () => {
         const insulin = calculateFoodInsulin(parseFloat(carbs));
         const foodItem = {
             id: Date.now(),
@@ -211,6 +209,18 @@ const BloodSugarTracker = () => {
         setCarbsDisplayValue('');
         setCarbsOnes(0);
         setCarbsTens(0);
+    };
+
+    // Food addition from barcode scanner
+    const handleBarcodeFood = (foodData) => {
+        const foodItem = {
+            id: Date.now(),
+            name: foodData.name || 'Scanned Item',
+            carbs: Number(foodData.carbs) || 0,
+            insulin: Number(foodData.insulin) || 0
+        };
+
+        setFoodItems(prev => [...prev, foodItem]);
     };
 
     const removeFood = (id) => {
@@ -236,7 +246,7 @@ const BloodSugarTracker = () => {
 
                 <div className="grid-container">
                     {/* Blood Sugar Setter */}
-                    <div className="card">
+                    <div className="card bloodsugar">
                         <h2 className="card-title">
                             <span className="card-title-icon">🩸</span>Blood Sugar Level (mg/dL)
                         </h2>
@@ -349,13 +359,13 @@ const BloodSugarTracker = () => {
                         </div>
                         {bloodSugarResult2.show && (
                             <div className={getAlertClass(bloodSugarResult2.type)}>
-                            {bloodSugarResult2.message}
+                                {bloodSugarResult2.message}
                             </div>
                         )}
                     </div>
 
                     {/* Food Tracker */}
-                    <div className="card">
+                    <div className="card carbs">
                         <h2 className="card-title">
                             <span className="card-title-icon">🍎</span>Food Tracker
                         </h2>
@@ -437,7 +447,7 @@ const BloodSugarTracker = () => {
                         />
                         <div className="button-group">
                             <button
-                                onClick={addFood}
+                                onClick={addManualFood}
                                 className="btn btn-primary"
                                 disabled={!foodName.trim() || Number.isNaN(Number(carbs)) || Number(carbs) < 0}
                             >
@@ -451,20 +461,14 @@ const BloodSugarTracker = () => {
                     </div>
 
                     <div className="card food-list-card">
-                    <BarcodeScanner
-                        onAddFood={(foodItem) => {
-                            addFood({
-                                name: foodItem.name,
-                                carbs: foodItem.carbs,
-                                insulin: foodItem.insulin,
-                            });
-                        }}
-                        calculateFoodInsulin={calculateFoodInsulin}
-                    />
+                        <BarcodeScanner
+                            onAddFood={handleBarcodeFood}
+                            calculateFoodInsulin={calculateFoodInsulin}
+                        />
                     </div>
 
                     {/* Food Items List */}
-                    <div className="card food-list-card">
+                    <div className="card items">
                         <h2 className="card-title">
                             <span className="card-title-icon">📋</span>Food Items & Insulin
                         </h2>
@@ -477,7 +481,7 @@ const BloodSugarTracker = () => {
                                 foodItems.map(item => (
                                     <div key={item.id} className="food-item">
                                         <div className="food-item-info">
-                                        <div className="food-item-name">
+                                            <div className="food-item-name">
                                                 {item.name}
                                             </div>
                                             <div className="food-item-carbs">
