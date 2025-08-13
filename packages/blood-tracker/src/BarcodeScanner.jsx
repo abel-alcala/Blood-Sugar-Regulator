@@ -355,6 +355,9 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
                             <div className="product-brand">
                                 {product ? (product.brand || "") : ""}
                             </div>
+                            <div className="product-brand">
+                                {product ? (product.serving || "") : ""}
+                            </div>
                         </div>
                     </div>
 
