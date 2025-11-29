@@ -35,6 +35,7 @@
 
 .grid-container {
     display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-template-areas:
     "bloodsugar carbs scanner"
     "items items items"
@@ -203,7 +204,12 @@
     color: #4a2b34;
     width: 100%;
     align-content: center;
-
+    white-space: nowrap;
+    min-height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-variant-numeric: tabular-nums;
 }
 
 .digit-controls {
@@ -214,7 +220,6 @@
 
 .digit-control {
     width: 100%;
-    display: flex;
     text-align: center;
     align-items: center;
     flex-direction: column;
@@ -256,6 +261,7 @@
     font-size: 3rem;
     font-weight: bold;
     margin-bottom: -10px;
+    font-variant-numeric: tabular-nums;
 }
 
 
@@ -665,6 +671,8 @@
     }
 
     .grid-container {
+        justify-self: center;
+        grid-template-columns: 1fr;
         grid-template-areas:
     "bloodsugar"
     "carbs"
