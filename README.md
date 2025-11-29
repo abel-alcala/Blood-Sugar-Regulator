@@ -23,20 +23,6 @@ Based on Emily's 1:12 carb ratio (1 unit insulin per 12g carbs):
 ### Total Insulin Summary
 Combines blood sugar correction insulin with food insulin for a complete dosing picture. No more mental math or fumbling with paper charts.
 
-## Installation Guide
-```bash
-# Clone the repository
-git clone https://github.com/abel-alcala/Blood-Sugar-Regulator.git
-cd packages/blood-tracker
-
-# Install dependencies
-npm install
-
-# Scripts
-npm run dev      # Start development server
-npm run build    # Build for production
-npm run preview  # Preview production build
-```
 
 ### Tech Stack Used
 - **React** - Modern UI framework
