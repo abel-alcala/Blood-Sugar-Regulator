@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import './page.css';
 import BarcodeScanner from "./BarcodeScanner";
 
-
 const BloodSugarTracker = () => {
     const [manualBloodSugar, setManualBloodSugar] = useState(0);
     const [currentBloodSugar, setCurrentBloodSugar] = useState(0);
@@ -27,9 +26,9 @@ const BloodSugarTracker = () => {
 
     const regulateSugar = (bloodSugar) => {
         if (bloodSugar < 70) {
-            return -1; // Sugar Low
+            return -1;
         } else if (bloodSugar >= 70 && bloodSugar <= 139) {
-            return 0; // Normal
+            return 0;
         } else if (bloodSugar >= 140 && bloodSugar <= 179) {
             return 0.5;
         } else if (bloodSugar >= 180 && bloodSugar <= 219) {
@@ -51,7 +50,7 @@ const BloodSugarTracker = () => {
         } else if (bloodSugar >= 500 && bloodSugar <= 539) {
             return 5;
         } else {
-            return -999; // Invalid BS Level
+            return -999;
         }
     };
 
@@ -82,7 +81,7 @@ const BloodSugarTracker = () => {
         if (bs <= 0) {
             setFeedback({
                 show: true,
-                message: "❌ Enter a valid blood sugar level",
+                message: "⚠️ Enter a valid blood sugar level",
                 type: "danger"
             });
             return;
@@ -112,7 +111,7 @@ const BloodSugarTracker = () => {
         } else {
             setFeedback({
                 show: true,
-                message: "❌ Invalid Blood Sugar Level",
+                message: "⚠️ Invalid Blood Sugar Level",
                 type: "danger"
             });
         }
@@ -190,7 +189,6 @@ const BloodSugarTracker = () => {
                 </div>
 
                 <div className="grid-container">
-                    {/* Blood Sugar Setter */}
                     <div className="card bloodsugar">
                         <h2 className="card-title">
                             <span className="card-title-icon">🩸</span>Blood Sugar Level (mg/dL)
@@ -200,55 +198,40 @@ const BloodSugarTracker = () => {
                                 {displayValue} mg/dL
                             </div>
                             <div className="digit-controls">
-                                {/* Hundreds */}
                                 <div className="digit-control">
                                     <label className="digit-label">Hundreds</label>
                                     <div className="digit-buttons">
-                                        <svg onClick={() => updateBloodSugar(100)}
-                                             className="digit-btn"
-                                             viewBox="-10 30 500 370">
+                                        <svg onClick={() => updateBloodSugar(100)} className="digit-btn" viewBox="-10 30 500 370">
                                             <path d="M2.728,366.416c6.8,4.9,21.5-1.2,37.2-15.5c28.1-25.7,56.6-51.4,83.4-78.6c41.4-41.9,81.7-84.9,122.4-127.4 c67,79.4,145.5,150,217.8,225.4c3.4,3.6,11.4,6.6,14.9,6.6c6.9,0,5.3-7.4,0.9-16.3c-14.7-29.3-38.2-59.1-64.4-87.1 c-51-54.3-101.2-109.2-154.5-161.7l-0.2-0.2l0,0c-7.4-7.3-19.3-7.2-26.6,0.2c-12.6,12.8-25.2,25.8-37.5,39 c-8.4,7.9-16.8,15.7-25.1,23.6c-52.7,50.4-104.6,101.6-153,155.8C4.128,345.716-4.772,361.116,2.728,366.416z" stroke="currentColor" strokeWidth="12" fill="currentColor" strokeLinejoin="round" strokeLinecap="round"></path>
                                         </svg>
                                         <div className="digit-value">{hundreds}</div>
-                                        <svg onClick={() => updateBloodSugar(-100)}
-                                             className="digit-btn"
-                                             viewBox="-10 30 500 370">
+                                        <svg onClick={() => updateBloodSugar(-100)} className="digit-btn" viewBox="-10 30 500 370">
                                             <path transform="rotate(180 241.56 241.56)" d="M2.728,366.416c6.8,4.9,21.5-1.2,37.2-15.5c28.1-25.7,56.6-51.4,83.4-78.6c41.4-41.9,81.7-84.9,122.4-127.4 c67,79.4,145.5,150,217.8,225.4c3.4,3.6,11.4,6.6,14.9,6.6c6.9,0,5.3-7.4,0.9-16.3c-14.7-29.3-38.2-59.1-64.4-87.1 c-51-54.3-101.2-109.2-154.5-161.7l-0.2-0.2l0,0c-7.4-7.3-19.3-7.2-26.6,0.2c-12.6,12.8-25.2,25.8-37.5,39 c-8.4,7.9-16.8,15.7-25.1,23.6c-52.7,50.4-104.6,101.6-153,155.8C4.128,345.716-4.772,361.116,2.728,366.416z" stroke="currentColor" strokeWidth="11" fill="currentColor" strokeLinejoin="round" strokeLinecap="round"></path>
                                         </svg>
                                     </div>
                                 </div>
 
-                                {/* Tens */}
                                 <div className="digit-control">
                                     <label className="digit-label">Tens</label>
                                     <div className="digit-buttons">
-                                        <svg onClick={() => updateBloodSugar(10)}
-                                             className="digit-btn"
-                                             viewBox="-10 30 500 370">
+                                        <svg onClick={() => updateBloodSugar(10)} className="digit-btn" viewBox="-10 30 500 370">
                                             <path d="M2.728,366.416c6.8,4.9,21.5-1.2,37.2-15.5c28.1-25.7,56.6-51.4,83.4-78.6c41.4-41.9,81.7-84.9,122.4-127.4 c67,79.4,145.5,150,217.8,225.4c3.4,3.6,11.4,6.6,14.9,6.6c6.9,0,5.3-7.4,0.9-16.3c-14.7-29.3-38.2-59.1-64.4-87.1 c-51-54.3-101.2-109.2-154.5-161.7l-0.2-0.2l0,0c-7.4-7.3-19.3-7.2-26.6,0.2c-12.6,12.8-25.2,25.8-37.5,39 c-8.4,7.9-16.8,15.7-25.1,23.6c-52.7,50.4-104.6,101.6-153,155.8C4.128,345.716-4.772,361.116,2.728,366.416z" stroke="currentColor" strokeWidth="11" fill="currentColor" strokeLinejoin="round" strokeLinecap="round"></path>
                                         </svg>
                                         <div className="digit-value">{tens}</div>
-                                        <svg onClick={() => updateBloodSugar(-10)}
-                                             className="digit-btn"
-                                             viewBox="-10 30 500 370">
+                                        <svg onClick={() => updateBloodSugar(-10)} className="digit-btn" viewBox="-10 30 500 370">
                                             <path transform="rotate(180 241.56 241.56)" d="M2.728,366.416c6.8,4.9,21.5-1.2,37.2-15.5c28.1-25.7,56.6-51.4,83.4-78.6c41.4-41.9,81.7-84.9,122.4-127.4 c67,79.4,145.5,150,217.8,225.4c3.4,3.6,11.4,6.6,14.9,6.6c6.9,0,5.3-7.4,0.9-16.3c-14.7-29.3-38.2-59.1-64.4-87.1 c-51-54.3-101.2-109.2-154.5-161.7l-0.2-0.2l0,0c-7.4-7.3-19.3-7.2-26.6,0.2c-12.6,12.8-25.2,25.8-37.5,39 c-8.4,7.9-16.8,15.7-25.1,23.6c-52.7,50.4-104.6,101.6-153,155.8C4.128,345.716-4.772,361.116,2.728,366.416z" stroke="currentColor" strokeWidth="11" fill="currentColor" strokeLinejoin="round" strokeLinecap="round"></path>
                                         </svg>
                                     </div>
                                 </div>
 
-                                {/* Ones */}
                                 <div className="digit-control">
                                     <label className="digit-label">Ones</label>
                                     <div className="digit-buttons">
-                                        <svg onClick={() => updateBloodSugar(1)}
-                                             className="digit-btn"
-                                             viewBox="-10 30 500 370">
+                                        <svg onClick={() => updateBloodSugar(1)} className="digit-btn" viewBox="-10 30 500 370">
                                             <path d="M2.728,366.416c6.8,4.9,21.5-1.2,37.2-15.5c28.1-25.7,56.6-51.4,83.4-78.6c41.4-41.9,81.7-84.9,122.4-127.4 c67,79.4,145.5,150,217.8,225.4c3.4,3.6,11.4,6.6,14.9,6.6c6.9,0,5.3-7.4,0.9-16.3c-14.7-29.3-38.2-59.1-64.4-87.1 c-51-54.3-101.2-109.2-154.5-161.7l-0.2-0.2l0,0c-7.4-7.3-19.3-7.2-26.6,0.2c-12.6,12.8-25.2,25.8-37.5,39 c-8.4,7.9-16.8,15.7-25.1,23.6c-52.7,50.4-104.6,101.6-153,155.8C4.128,345.716-4.772,361.116,2.728,366.416z" stroke="currentColor" strokeWidth="11" fill="currentColor" strokeLinejoin="round" strokeLinecap="round"></path>
                                         </svg>
                                         <div className="digit-value">{ones}</div>
-                                        <svg onClick={() => updateBloodSugar(-1)}
-                                             className="digit-btn"
-                                             viewBox="-10 30 500 370">
+                                        <svg onClick={() => updateBloodSugar(-1)} className="digit-btn" viewBox="-10 30 500 370">
                                             <path transform="rotate(180 241.56 241.56)" d="M2.728,366.416c6.8,4.9,21.5-1.2,37.2-15.5c28.1-25.7,56.6-51.4,83.4-78.6c41.4-41.9,81.7-84.9,122.4-127.4 c67,79.4,145.5,150,217.8,225.4c3.4,3.6,11.4,6.6,14.9,6.6c6.9,0,5.3-7.4,0.9-16.3c-14.7-29.3-38.2-59.1-64.4-87.1 c-51-54.3-101.2-109.2-154.5-161.7l-0.2-0.2l0,0c-7.4-7.3-19.3-7.2-26.6,0.2c-12.6,12.8-25.2,25.8-37.5,39 c-8.4,7.9-16.8,15.7-25.1,23.6c-52.7,50.4-104.6,101.6-153,155.8C4.128,345.716-4.772,361.116,2.728,366.416z" stroke="currentColor" strokeWidth="11" fill="currentColor" strokeLinejoin="round" strokeLinecap="round"></path>
                                         </svg>
                                     </div>
@@ -257,7 +240,7 @@ const BloodSugarTracker = () => {
                         </div>
                         <div className="button-group">
                             <button onClick={setBloodSugarFromDigits} className="btn btn-primary">
-                                Set & Check Status
+                                Check Status
                             </button>
                             <button onClick={resetDigits} className="btn btn-secondary">
                                 Reset
@@ -270,10 +253,9 @@ const BloodSugarTracker = () => {
                         )}
                     </div>
 
-                    {/* Food Tracker */}
                     <div className="card carbs">
                         <h2 className="card-title">
-                            <span className="card-title-icon">🍎</span>Food Tracker
+                            <span className="card-title-icon">🎃</span>Food Tracker
                         </h2>
                         <div className="form-group">
                             <div className="digit-controls">
@@ -283,34 +265,24 @@ const BloodSugarTracker = () => {
                                 <div className="digit-control">
                                     <label className="digit-label">Tens</label>
                                     <div className="digit-buttons">
-                                        <svg onClick={() => adjustCarbsDigit('tens', 1)}
-                                             className="digit-btn"
-                                             viewBox="-10 30 500 370">
+                                        <svg onClick={() => adjustCarbsDigit('tens', 1)} className="digit-btn" viewBox="-10 30 500 370">
                                             <path d="M2.728,366.416c6.8,4.9,21.5-1.2,37.2-15.5c28.1-25.7,56.6-51.4,83.4-78.6c41.4-41.9,81.7-84.9,122.4-127.4 c67,79.4,145.5,150,217.8,225.4c3.4,3.6,11.4,6.6,14.9,6.6c6.9,0,5.3-7.4,0.9-16.3c-14.7-29.3-38.2-59.1-64.4-87.1 c-51-54.3-101.2-109.2-154.5-161.7l-0.2-0.2l0,0c-7.4-7.3-19.3-7.2-26.6,0.2c-12.6,12.8-25.2,25.8-37.5,39 c-8.4,7.9-16.8,15.7-25.1,23.6c-52.7,50.4-104.6,101.6-153,155.8C4.128,345.716-4.772,361.116,2.728,366.416z" stroke="currentColor" strokeWidth="11" fill="currentColor" strokeLinejoin="round" strokeLinecap="round"></path>
                                         </svg>
                                         <div className="digit-value">{CarbsTens}</div>
-                                        <svg onClick={() => adjustCarbsDigit('tens', -1)}
-                                             className="digit-btn"
-                                             viewBox="-10 30 500 370">
+                                        <svg onClick={() => adjustCarbsDigit('tens', -1)} className="digit-btn" viewBox="-10 30 500 370">
                                             <path transform="rotate(180 241.56 241.56)" d="M2.728,366.416c6.8,4.9,21.5-1.2,37.2-15.5c28.1-25.7,56.6-51.4,83.4-78.6c41.4-41.9,81.7-84.9,122.4-127.4 c67,79.4,145.5,150,217.8,225.4c3.4,3.6,11.4,6.6,14.9,6.6c6.9,0,5.3-7.4,0.9-16.3c-14.7-29.3-38.2-59.1-64.4-87.1 c-51-54.3-101.2-109.2-154.5-161.7l-0.2-0.2l0,0c-7.4-7.3-19.3-7.2-26.6,0.2c-12.6,12.8-25.2,25.8-37.5,39 c-8.4,7.9-16.8,15.7-25.1,23.6c-52.7,50.4-104.6,101.6-153,155.8C4.128,345.716-4.772,361.116,2.728,366.416z" stroke="currentColor" strokeWidth="11" fill="currentColor" strokeLinejoin="round" strokeLinecap="round"></path>
                                         </svg>
                                     </div>
                                 </div>
 
-
-                                {/* Ones */}
                                 <div className="digit-control">
                                     <label className="digit-label">Ones</label>
                                     <div className="digit-buttons">
-                                        <svg onClick={() => adjustCarbsDigit('ones', 1)}
-                                             className="digit-btn"
-                                             viewBox="-10 30 500 370">
+                                        <svg onClick={() => adjustCarbsDigit('ones', 1)} className="digit-btn" viewBox="-10 30 500 370">
                                             <path d="M2.728,366.416c6.8,4.9,21.5-1.2,37.2-15.5c28.1-25.7,56.6-51.4,83.4-78.6c41.4-41.9,81.7-84.9,122.4-127.4 c67,79.4,145.5,150,217.8,225.4c3.4,3.6,11.4,6.6,14.9,6.6c6.9,0,5.3-7.4,0.9-16.3c-14.7-29.3-38.2-59.1-64.4-87.1 c-51-54.3-101.2-109.2-154.5-161.7l-0.2-0.2l0,0c-7.4-7.3-19.3-7.2-26.6,0.2c-12.6,12.8-25.2,25.8-37.5,39 c-8.4,7.9-16.8,15.7-25.1,23.6c-52.7,50.4-104.6,101.6-153,155.8C4.128,345.716-4.772,361.116,2.728,366.416z" stroke="currentColor" strokeWidth="11" fill="currentColor" strokeLinejoin="round" strokeLinecap="round"></path>
                                         </svg>
                                         <div className="digit-value">{CarbsOnes}</div>
-                                        <svg onClick={() => adjustCarbsDigit('ones', -1)}
-                                             className="digit-btn"
-                                             viewBox="-10 30 500 370">
+                                        <svg onClick={() => adjustCarbsDigit('ones', -1)} className="digit-btn" viewBox="-10 30 500 370">
                                             <path transform="rotate(180 241.56 241.56)" d="M2.728,366.416c6.8,4.9,21.5-1.2,37.2-15.5c28.1-25.7,56.6-51.4,83.4-78.6c41.4-41.9,81.7-84.9,122.4-127.4 c67,79.4,145.5,150,217.8,225.4c3.4,3.6,11.4,6.6,14.9,6.6c6.9,0,5.3-7.4,0.9-16.3c-14.7-29.3-38.2-59.1-64.4-87.1 c-51-54.3-101.2-109.2-154.5-161.7l-0.2-0.2l0,0c-7.4-7.3-19.3-7.2-26.6,0.2c-12.6,12.8-25.2,25.8-37.5,39 c-8.4,7.9-16.8,15.7-25.1,23.6c-52.7,50.4-104.6,101.6-153,155.8C4.128,345.716-4.772,361.116,2.728,366.416z" stroke="currentColor" strokeWidth="11" fill="currentColor" strokeLinejoin="round" strokeLinecap="round"></path>
                                         </svg>
                                     </div>
@@ -333,7 +305,6 @@ const BloodSugarTracker = () => {
                             >
                                 Add Food
                             </button>
-
                             <button onClick={clearAllFoods} className="btn btn-secondary">
                                 Clear All
                             </button>
@@ -347,10 +318,9 @@ const BloodSugarTracker = () => {
                         />
                     </div>
 
-                    {/* Food Items List */}
                     <div className="card items">
                         <h2 className="card-title">
-                            <span className="card-title-icon">📋</span>Food Items & Insulin
+                            <span className="card-title-icon">📋</span>Food Items
                         </h2>
                         <div className="food-items-grid">
                             {foodItems.length === 0 ? (
@@ -384,42 +354,41 @@ const BloodSugarTracker = () => {
                             )}
                         </div>
                     </div>
-                </div>
 
-                {/* Insulin Summary */}
-                {showSummary && (
-                    <div className="insulin-summary">
-                        <h3 className="summary-title">
-                            💉 Insulin Summary
-                        </h3>
-                        <div className="summary-grid">
-                            <div className="summary-item">
-                                <div className="summary-label">
-                                    Blood Sugar Regulation
+                    {showSummary && (
+                        <div className="insulin-summary">
+                            <h2 className="summary-title">
+                                💉 Insulin Summary
+                            </h2>
+                            <div className="summary-grid">
+                                <div className="summary-item">
+                                    <div className="summary-label">
+                                        Blood Sugar Regulation
+                                    </div>
+                                    <div className="summary-value">
+                                        {bsInsulin} units
+                                    </div>
                                 </div>
-                                <div className="summary-value">
-                                    {bsInsulin} units
+                                <div className="summary-item">
+                                    <div className="summary-label">
+                                        Food Items
+                                    </div>
+                                    <div className="summary-value">
+                                        {foodInsulin} units
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="summary-item">
-                                <div className="summary-label">
-                                    Food Items
-                                </div>
-                                <div className="summary-value">
-                                    {foodInsulin} units
-                                </div>
-                            </div>
-                            <div className="summary-item">
-                                <div className="summary-label">
-                                    Total Insulin Needed
-                                </div>
-                                <div className="summary-value">
-                                    {totalInsulin} units
+                                <div className="summary-item">
+                                    <div className="summary-label">
+                                        Total Insulin Needed
+                                    </div>
+                                    <div className="summary-value">
+                                        {totalInsulin} units
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         </div>
     );
