@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from "react";
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 
 export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnProp}) {
     const defaultCalc = (carbs) => {
@@ -11,13 +10,16 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
     const calculateFoodInsulin = typeof calcFnProp === "function" ? calcFnProp : defaultCalc;
 
     const [activeTab, setActiveTab] = useState("manual");
-    const scannerRef = useRef(null);
+    const videoRef = useRef(null);
+    const detectorRef = useRef(null);
+    const intervalRef = useRef(null);
 
     const [statusMsg, setStatusMsg] = useState("");
-    const [supportedDetector, setSupportedDetector] = useState(true);
+    const [supportedDetector, setSupportedDetector] = useState(false);
 
     const [barcodeValue, setBarcodeValue] = useState("");
     const [product, setProduct] = useState(null);
+    const [imgUploadPreview, setImgUploadPreview] = useState(null);
     const [manualUPC, setManualUPC] = useState("");
 
     const [servingSize, setServingSize] = useState("");
@@ -27,76 +29,77 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
     const [insulinUnits, setInsulinUnits] = useState(0);
 
     useEffect(() => {
-        return () => {
-            if (scannerRef.current) {
-                scannerRef.current.stop().catch(err => console.error("Failed to stop scanner", err));
+        const isSupported = typeof window !== "undefined" && "BarcodeDetector" in window;
+        setSupportedDetector(isSupported);
+        if (!isSupported) {
+            setActiveTab("manual");
+            setStatusMsg("Barcode Detector not supported by this browser. Use Manual entry.");
+        } else {
+            try {
+                detectorRef.current = new window.BarcodeDetector({
+                    formats: ["ean_13", "ean_8", "upc_a", "upc_e"]
+                });
+            } catch (e) {
+                detectorRef.current = new window.BarcodeDetector();
             }
-        };
+        }
     }, []);
 
     useEffect(() => {
-        if (activeTab === "scan") {
-            startScanner();
+        if (activeTab === "scan" && supportedDetector) {
+            startCamera();
         } else {
-            stopScanner();
+            stopCamera();
         }
-    }, [activeTab]);
 
-    const startScanner = async () => {
-        setTimeout(async () => {
-            try {
-                if (scannerRef.current?.isScanning) return;
+        return () => stopCamera();
+    }, [activeTab, supportedDetector]);
 
-                const html5QrCode = new Html5Qrcode("reader");
-                scannerRef.current = html5QrCode;
+    const startCamera = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: {facingMode: "environment"}
+            });
 
-                await html5QrCode.start(
-                    { facingMode: "environment" },
-                    {
-                        fps: 10,
-                        qrbox: { width: 300, height: 150 },
-                        aspectRatio: 2.0,
-                        formatsToSupport: [
-                            Html5QrcodeSupportedFormats.UPC_A,
-                            Html5QrcodeSupportedFormats.UPC_E,
-                            Html5QrcodeSupportedFormats.EAN_13,
-                            Html5QrcodeSupportedFormats.EAN_8,
-                            Html5QrcodeSupportedFormats.CODE_128,
-                            Html5QrcodeSupportedFormats.CODE_39,
-                            Html5QrcodeSupportedFormats.CODE_93,
-                            Html5QrcodeSupportedFormats.CODABAR,
-                        ]
-                    },
-                    (decodedText, decodedResult) => {
-                        console.log("Scanned:", decodedText, decodedResult.result.format);
-                        handleBarcodeRaw(decodedText);
-                        stopScanner();
-                    },
-                    (errorMessage) => {
-                        // Silently ignore scanning errors
-                    }
-                );
-                setStatusMsg("Point camera at barcode");
-            } catch (err) {
-                console.error("Failed to start scanner", err);
-                setStatusMsg("Could not access camera. Please ensure permissions are granted.");
-                setActiveTab("manual");
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+                videoRef.current.onloadedmetadata = () => {
+                    videoRef.current.play();
+                    startScanning();
+                };
             }
-        }, 100);
+        } catch (err) {
+            console.error("Camera failed", err);
+            setStatusMsg("Could not access camera. Please allow permissions or use Manual.");
+        }
     };
 
-    const stopScanner = async () => {
-        if (scannerRef.current) {
-            try {
-                if (scannerRef.current.isScanning) {
-                    await scannerRef.current.stop();
-                }
-                scannerRef.current.clear();
-            } catch (err) {
-                console.error("Failed to stop scanner", err);
-            }
-            scannerRef.current = null;
+    const stopCamera = () => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        if (videoRef.current && videoRef.current.srcObject) {
+            const tracks = videoRef.current.srcObject.getTracks();
+            tracks.forEach(track => track.stop());
+            videoRef.current.srcObject = null;
         }
+    };
+
+    const startScanning = () => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+
+        intervalRef.current = setInterval(async () => {
+            if (videoRef.current && detectorRef.current && !videoRef.current.paused && videoRef.current.readyState === 4) {
+                try {
+                    const codes = await detectorRef.current.detect(videoRef.current);
+                    if (codes && codes.length > 0) {
+                        const raw = codes[0].rawValue;
+                        handleBarcodeRaw(raw);
+                        stopCamera();
+                    }
+                } catch (err) {
+                    console.warn("Detection error:", err);
+                }
+            }
+        }, 200);
     };
 
     useEffect(() => {
@@ -112,7 +115,6 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
         if (!bc) return;
 
         setBarcodeValue(bc);
-        setStatusMsg("Searching for product...");
 
         try {
             const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${encodeURIComponent(bc)}.json`);
@@ -160,8 +162,7 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
                 });
                 setCarbsPerServing(Number((carbsServingFinal || 0).toFixed(1)));
                 setQuantity(1);
-                setActiveTab("info");
-                setStatusMsg("");
+                setActiveTab("info")
             } else {
                 setProduct(null);
                 setCarbsPerServing(0);
@@ -170,8 +171,6 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
             }
         } catch (err) {
             console.error("Lookup failed:", err);
-            setStatusMsg("Lookup failed. Please check internet or try manual.");
-            setActiveTab("manual");
         }
     };
 
@@ -194,9 +193,10 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
 
         setProduct(null);
         setBarcodeValue("");
+        setActiveTab("scan")
         setManualUPC("");
         setCarbsPerServing(0);
-        setActiveTab("scan");
+        if (activeTab === "scan") startScanning();
     };
 
     return (
@@ -206,12 +206,14 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
                     <span className="card-title-icon"></span> Add Food
                 </h2>
                 <div className="scanner-tabs">
-                    <button
-                        className={`btn scanner-tab-btn ${activeTab === "manual" ? "btn-primary" : "btn-secondary"}`}
-                        onClick={() => setActiveTab("manual")}
-                    >
-                        ✏️ Manual
-                    </button>
+                    {supportedDetector && (
+                        <button
+                            className={`btn scanner-tab-btn ${activeTab === "manual" ? "btn-primary" : "btn-secondary"}`}
+                            onClick={() => setActiveTab("manual")}
+                        >
+                            ✏️ Manual
+                        </button>
+                    )}
                     <button
                         className={`btn scanner-tab-btn ${activeTab === "scan" ? "btn-primary" : "btn-secondary"}`}
                         onClick={() => setActiveTab("scan")}
@@ -225,10 +227,13 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
                 <div className="barcode-group">
                     {activeTab === "scan" && (
                         <div className="camera-container">
-                            <div id="reader"></div>
-                            {statusMsg && (
-                                <div className="scanner-hint">{statusMsg}</div>
-                            )}
+                            <video
+                                ref={videoRef}
+                                className="scanner-video"
+                                muted
+                                playsInline
+                            />
+                            <div className="scanner-guideline"></div>
                         </div>
                     )}
 
