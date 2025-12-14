@@ -389,7 +389,6 @@
     min-height: 200px;
     margin-bottom: 20px;
     border-radius: 12px;
-    transform: rotateY(180deg);
     overflow: hidden;
 }
 
