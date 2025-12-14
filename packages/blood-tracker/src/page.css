@@ -387,12 +387,10 @@
 .camera-container {
     position: relative;
     min-height: 200px;
-    background: #000;
     margin-bottom: 20px;
     border-radius: 12px;
     transform: rotateY(180deg);
     overflow: hidden;
-    border: 2px dashed #e28dab;
 }
 
 .scanner-video {
