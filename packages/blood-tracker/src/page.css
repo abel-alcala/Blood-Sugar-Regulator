@@ -385,29 +385,33 @@
 }
 
 .camera-container {
-    position: relative;
-    min-height: 200px;
     margin-bottom: 20px;
+    position: relative;
+}
+
+#reader {
+    border: 2px solid #e28dab;
     border-radius: 12px;
     overflow: hidden;
 }
 
-.scanner-video {
+#reader video {
     width: 100%;
-    height: auto;
-    max-height: 300px;
-    object-fit: cover;
+    border-radius: 10px;
 }
 
-.scanner-guideline {
-    position: absolute;
-    top: 50%;
-    left: 10%;
-    right: 10%;
-    height: 2px;
-    background: red;
-    box-shadow: 0 0 4px red;
-    opacity: 0.7;
+#reader__dashboard_section {
+    display: none !important;
+}
+
+.scanner-hint {
+    text-align: center;
+    padding: 10px;
+    color: #fff;
+    background: rgba(193, 80, 126, 0.8);
+    font-weight: 600;
+    margin-top: 10px;
+    border-radius: 8px;
 }
 
 .scanner-instruction {

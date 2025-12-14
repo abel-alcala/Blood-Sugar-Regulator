@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import { Html5Qrcode } from "html5-qrcode";
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 
 export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnProp}) {
     const defaultCalc = (carbs) => {
@@ -53,18 +53,30 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
                 await html5QrCode.start(
                     { facingMode: "environment" },
                     {
-                        fps: 15,
-                        qrbox: { width: 250, height: 250 },
-                        aspectRatio: 1.0
+                        fps: 10,
+                        qrbox: { width: 300, height: 150 },
+                        aspectRatio: 2.0,
+                        formatsToSupport: [
+                            Html5QrcodeSupportedFormats.UPC_A,
+                            Html5QrcodeSupportedFormats.UPC_E,
+                            Html5QrcodeSupportedFormats.EAN_13,
+                            Html5QrcodeSupportedFormats.EAN_8,
+                            Html5QrcodeSupportedFormats.CODE_128,
+                            Html5QrcodeSupportedFormats.CODE_39,
+                            Html5QrcodeSupportedFormats.CODE_93,
+                            Html5QrcodeSupportedFormats.CODABAR,
+                        ]
                     },
-                    (decodedText) => {
+                    (decodedText, decodedResult) => {
+                        console.log("Scanned:", decodedText, decodedResult.result.format);
                         handleBarcodeRaw(decodedText);
                         stopScanner();
                     },
                     (errorMessage) => {
+                        // Silently ignore scanning errors
                     }
                 );
-                setStatusMsg("");
+                setStatusMsg("Point camera at barcode");
             } catch (err) {
                 console.error("Failed to start scanner", err);
                 setStatusMsg("Could not access camera. Please ensure permissions are granted.");
@@ -213,7 +225,10 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
                 <div className="barcode-group">
                     {activeTab === "scan" && (
                         <div className="camera-container">
-                            <div id="reader" style={{width: "100%", height: "100%"}}></div>
+                            <div id="reader"></div>
+                            {statusMsg && (
+                                <div className="scanner-hint">{statusMsg}</div>
+                            )}
                         </div>
                     )}
 
@@ -237,7 +252,7 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
                         </div>
                     )}
 
-                    {statusMsg && (
+                    {activeTab === "manual" && statusMsg && (
                         <div className="status-message" aria-live="polite">
                             <strong>Status:</strong> <span>{statusMsg}</span>
                         </div>
