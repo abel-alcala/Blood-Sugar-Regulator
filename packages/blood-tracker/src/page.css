@@ -45,6 +45,8 @@
 .items {
     grid-area: items;
     width: 100%;
+    height: 350px;
+    overflow: hidden;
 }
 
 .bloodsugar {
@@ -60,16 +62,21 @@
 }
 
 .food-items-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    display: flex;
+    flex: 1;
+    overflow-y: auto;
+    flex-direction: column;
+    max-height: 230px;
     gap: 15px;
     margin-top: 20px;
+    padding-right: 10px;
 }
 
 .card {
     background: white;
     border-radius: 15px;
     padding: 25px;
+    height: inherit;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
@@ -82,15 +89,20 @@
     align-items: center;
     flex-wrap: nowrap;
     gap: 10px;
-    margin-bottom: 20px;
 }
 
 .card-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     flex-wrap: nowrap;
-    gap: 10px;
+    gap: 15px;
+    margin-bottom: 20px;
+
+    .btn {
+        width: max-content;
+        padding: 10px;
+    }
 }
 
 .scanner-tabs {
@@ -98,7 +110,6 @@
     flex: 1;
     justify-content: center;
     gap: 8px;
-    margin-bottom: 20px;
 }
 
 .scanner-tab-btn {
@@ -300,6 +311,14 @@
 .food-item-actions {
     display: flex;
     align-items: center;
+    gap: 4px;
+}
+
+.fav-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
 }
 
 .insulin-badge {
@@ -309,16 +328,18 @@
     border-radius: 15px;
     font-size: 0.9em;
     font-weight: 600;
+
 }
 
 .remove-btn {
     background: #dc3545;
     color: white;
     border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
     cursor: pointer;
-    margin-left: 10px;
+    font-size: 1.3rem;
 }
 
 .remove-btn:hover {
@@ -386,9 +407,8 @@
 
 .camera-container {
     position: relative;
-    min-height: 200px;
+    max-height: 200px;
     background: #000;
-    margin-bottom: 20px;
     border-radius: 12px;
     transform: rotateY(180deg);
     overflow: hidden;
@@ -616,7 +636,71 @@
     cursor: not-allowed;
 }
 
+.items-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.items-tab-btn {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #888;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+.items-tab-btn.active {
+    background: #e28dab;
+    color: white;
+}
+
+.fav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #ccc;
+    margin-right: 5px;
+    transition: color 0.2s;
+    line-height: 1;
+}
+
+.fav-btn:hover, .fav-btn.is-active {
+    color: #ffc107;
+}
+
+.add-fav-btn {
+    background: #c1507e;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+.add-fav-btn:hover {
+    background: #a54468;
+}
+
 @media (max-width: 768px) {
+    .card {
+        height: min-content;
+    }
+
+    .digit-display {
+        font-size: 2.9rem;
+    }
+
     .product-container {
         flex-direction: column;
     }
@@ -668,8 +752,15 @@
     }
 
     .card-title {
-        font-size: 1.7rem;
         margin-bottom: 10px;
+    }
+
+    .items-tabs {
+        justify-content: space-evenly;
+    }
+
+    .items-tabs button {
+        font-size: 1rem;
     }
 
     .grid-container {
@@ -681,4 +772,5 @@
         "scanner"
         "items"
         "summary";
-    }}
+    }
+}
