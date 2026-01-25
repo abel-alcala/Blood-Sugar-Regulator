@@ -202,23 +202,21 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
     return (
         <div className="barcode-scanner">
             <div className="card-header">
-                <h2 className="card-title">
-                    <span className="card-title-icon"></span> Add Food
-                </h2>
+                <h2 className="card-title">Add Food Items</h2>
                 <div className="scanner-tabs">
                     {supportedDetector && (
                         <button
                             className={`btn scanner-tab-btn ${activeTab === "manual" ? "btn-primary" : "btn-secondary"}`}
                             onClick={() => setActiveTab("manual")}
                         >
-                            ✏️ Manual
+                            Barcode ID
                         </button>
                     )}
                     <button
                         className={`btn scanner-tab-btn ${activeTab === "scan" ? "btn-primary" : "btn-secondary"}`}
                         onClick={() => setActiveTab("scan")}
                     >
-                        📷 Scan
+                        Scan Barcode
                     </button>
                 </div>
             </div>

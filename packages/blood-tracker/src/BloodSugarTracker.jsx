@@ -24,7 +24,7 @@ const BloodSugarTracker = () => {
 
     const [activeListTab, setActiveListTab] = useState('current'); // 'current' | 'favorites'
 
-    const [foodName, setFoodName] = useState('Food Item');
+    const [foodName, setFoodName] = useState('');
     const [carbs, setCarbs] = useState('');
     const displayValue = manualBloodSugar.toString().padStart(3, '0');
     const hundreds = Math.floor(manualBloodSugar / 100) % 10;
@@ -69,20 +69,20 @@ const BloodSugarTracker = () => {
     const setBloodSugarFromDigits = () => {
         const bs = manualBloodSugar;
         if (bs <= 0) {
-            setFeedback({show: true, message: "⚠️ Enter a valid blood sugar level", type: "danger"});
+            setFeedback({show: true, message: "Enter a valid blood sugar level", type: "danger"});
             return;
         }
         setCurrentBloodSugar(bs);
         const units = regulateSugar(bs);
 
         if (units === -1) {
-            setFeedback({show: true, message: "⚠️ Blood sugar is too low! Eat a snack to raise it.", type: "danger"});
+            setFeedback({show: true, message: "Blood sugar is too low! Eat a snack to raise it.", type: "danger"});
         } else if (units === 0) {
-            setFeedback({show: true, message: "✅ Blood sugar is normal. No insulin needed.", type: "normal"});
+            setFeedback({show: true, message: "Blood sugar is normal. No insulin needed.", type: "normal"});
         } else if (units > 0) {
-            setFeedback({show: true, message: `💉 Insulin needed: ${units} units`, type: "warning"});
+            setFeedback({show: true, message: `Insulin needed: ${units} units`, type: "warning"});
         } else {
-            setFeedback({show: true, message: "⚠️ Invalid Blood Sugar Level", type: "danger"});
+            setFeedback({show: true, message: "Invalid Blood Sugar Level", type: "danger"});
         }
     };
 
@@ -171,13 +171,13 @@ const BloodSugarTracker = () => {
     return (<div className="blood-sugar-tracker">
         <div className="tracker-container">
             <div className="header">
-                <h1>🩸Emily's Blood Sugar & Insulin Regulator</h1>
+                <h1>Emily's Blood Sugar & Insulin Regulator</h1>
             </div>
 
             <div className="grid-container">
                 <div className="card bloodsugar">
                     <h2 className="card-title">
-                        <span className="card-title-icon">🩸</span>Blood Sugar Level
+                        Blood Sugar Level
                     </h2>
                     <div className="form-group">
                         <div className="digit-display">{displayValue} mg/dL</div>
@@ -252,7 +252,7 @@ const BloodSugarTracker = () => {
                 </div>
 
                 <div className="card carbs">
-                    <h2 className="card-title"><span className="card-title-icon">🎃</span>Food Tracker</h2>
+                    <h2 className="card-title">Insulin Calculator</h2>
                     <div className="form-group">
                         <div className="digit-controls">
                             <div className="digit-display">{CarbsDisplayValue} g</div>
@@ -315,7 +315,7 @@ const BloodSugarTracker = () => {
                 </div>
 
                 <div className="card items">
-                    <h2 className="card-title"><span className="card-title-icon">📋</span>Food Items</h2>
+                    <h2 className="card-title">Food Items</h2>
 
                     <div className="items-tabs">
                         <button
@@ -328,7 +328,7 @@ const BloodSugarTracker = () => {
                             className={`items-tab-btn ${activeListTab === 'favorites' ? 'active' : ''}`}
                             onClick={() => setActiveListTab('favorites')}
                         >
-                            🍉 Saved Items
+                            Saved Items
                         </button>
                     </div>
 

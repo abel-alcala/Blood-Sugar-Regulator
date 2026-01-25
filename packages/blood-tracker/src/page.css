@@ -69,7 +69,6 @@
     max-height: 230px;
     gap: 15px;
     margin-top: 20px;
-    padding-right: 10px;
 }
 
 .card {
@@ -89,14 +88,15 @@
     align-items: center;
     flex-wrap: nowrap;
     gap: 10px;
+
 }
 
 .card-header {
     display: flex;
+    flex-direction: column;
     justify-content: flex-end;
     align-items: center;
     flex-wrap: nowrap;
-    gap: 15px;
     margin-bottom: 20px;
 
     .btn {
@@ -107,6 +107,7 @@
 
 .scanner-tabs {
     display: flex;
+    flex-direction: row;
     flex: 1;
     justify-content: center;
     gap: 8px;
@@ -697,6 +698,15 @@
         height: min-content;
     }
 
+    .items {
+        height: auto;
+        overflow: visible;
+    }
+
+    .food-items-grid {
+        max-height: none;
+    }
+
     .digit-display {
         font-size: 2.9rem;
     }
@@ -773,4 +783,5 @@
         "items"
         "summary";
     }
+
 }
