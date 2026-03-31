@@ -351,25 +351,25 @@
     grid-area: summary;
     background: linear-gradient(135deg, #c1507e, #5c3744);
     color: white;
-    padding: 20px;
+    padding: 30px 35px;
     border-radius: 15px;
     text-align: center;
 }
 
 .summary-title {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-size: 1.8em;
 }
 
 .summary-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
 }
 
 .summary-item {
     background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
+    padding: 20px 15px;
     border-radius: 10px;
     backdrop-filter: blur(5px);
 }
@@ -782,6 +782,15 @@
         "scanner"
         "items"
         "summary";
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .insulin-summary {
+        padding: 20px;
     }
 
 }
