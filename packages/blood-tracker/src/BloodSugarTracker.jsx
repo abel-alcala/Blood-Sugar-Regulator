@@ -166,7 +166,6 @@ const BloodSugarTracker = () => {
     const bsInsulin = currentBloodSugar > 0 ? Math.max(0, regulateSugar(currentBloodSugar)) : 0;
     const foodInsulin = foodItems.reduce((total, item) => total + item.insulin, 0);
     const totalInsulin = bsInsulin + foodInsulin;
-    const showSummary = foodItems.length > 0 || currentBloodSugar > 0;
 
     return (<div className="blood-sugar-tracker">
         <div className="tracker-container">
@@ -333,8 +332,7 @@ const BloodSugarTracker = () => {
                     </div>
 
                     {activeListTab === 'current' ? (<div className="food-items-grid">
-                        {foodItems.length === 0 ? (<p className="empty-state">No food items added yet.
-                            needed</p>) : (foodItems.map(item => (<div key={item.id} className="food-item">
+                        {foodItems.length === 0 ? (<p className="empty-state">No food items added yet.</p>) : (foodItems.map(item => (<div key={item.id} className="food-item">
                             <div className="food-item-info">
                                 <div className="food-item-name">{item.name}</div>
                                 <div className="food-item-carbs">{item.carbs}g carbs - {item.insulin} units</div>
@@ -352,8 +350,7 @@ const BloodSugarTracker = () => {
                         </div>)))}
                     </div>) : (/* Favorites View */
                         <div className="food-items-grid">
-                            {favorites.length === 0 ? (<p className="empty-state">No favorite items yet.
-                                them here!</p>) : (favorites.map(fav => (
+                            {favorites.length === 0 ? (<p className="empty-state">No saved items yet. Star ★ a food item to save it.</p>) : (favorites.map(fav => (
                                 <div key={fav.id} className="food-item favorite-item">
                                     <div className="food-item-info">
                                         <div className="food-item-name">{fav.name}</div>
@@ -373,7 +370,7 @@ const BloodSugarTracker = () => {
                         </div>)}
                 </div>
 
-                {showSummary && (<div className="insulin-summary">
+                <div className="insulin-summary">
                     <h2 className="summary-title">💉 Insulin Summary</h2>
                     <div className="summary-grid">
                         <div className="summary-item">
@@ -389,7 +386,7 @@ const BloodSugarTracker = () => {
                             <div className="summary-value">{totalInsulin} units</div>
                         </div>
                     </div>
-                </div>)}
+                </div>
             </div>
         </div>
     </div>);
