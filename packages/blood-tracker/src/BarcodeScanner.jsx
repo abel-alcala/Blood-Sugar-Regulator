@@ -265,11 +265,11 @@ export default function BarcodeScanner({onAddFood, calculateFoodInsulin: calcFnP
                         <div className="product-container">
                             <div className="product-details">
                                 <div className="product-header">
-                                    <div className="product-image">
-                                        {product.imageUrl && (
+                                    {product.imageUrl && (
+                                        <div className="product-image">
                                             <img src={product.imageUrl} alt={product.name} className="product-img"/>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
                                     <div className="product-title">
                                         <div className="product-name">{product.name}</div>
                                         <div className="product-brand">{product.brand}</div>

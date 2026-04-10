@@ -131,6 +131,7 @@
 }
 
 .form-label {
+    display: block;
     margin-bottom: 8px;
     font-weight: 600;
     color: #7a5a63;
@@ -562,6 +563,24 @@
     gap: 20px;
     flex-wrap: wrap;
     width: 100%;
+    animation: productEnter 0.2s ease-out both;
+}
+
+@keyframes productEnter {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .product-container {
+        animation: none;
+    }
 }
 
 .product-img {
@@ -574,16 +593,26 @@
 
 .product-details {
     flex: 1;
-    margin-left: 15px;
+}
+
+.product-image {
+    flex-shrink: 0;
 }
 
 .product-header {
     display: flex;
     flex-direction: row;
+    gap: var(--space-sm);
+    align-items: flex-start;
+    margin-bottom: var(--space-sm);
 }
 
 .product-title {
-    margin: 10px 0 0 10px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    justify-content: center;
 }
 
 .product-name {
@@ -632,7 +661,6 @@
     padding: 15px;
     border-radius: 10px;
     margin-bottom: 20px;
-    border-left: 4px solid #c1507e;
 }
 
 .nutrition-item {
@@ -655,9 +683,10 @@
 .insulin-units {
     background: #c1507e;
     color: white;
-    padding: 4px 12px;
+    padding: 5px 14px;
     border-radius: 15px;
-    font-size: 0.9em;
+    font-size: 1em;
+    font-weight: 700;
 }
 
 .add-button-container {
@@ -680,6 +709,7 @@
 
 .items-tabs {
     display: flex;
+    justify-content: space-evenly;
     gap: 10px;
     margin-bottom: 15px;
     border-bottom: 2px solid #f0e4e7;
