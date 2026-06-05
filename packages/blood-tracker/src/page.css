@@ -787,8 +787,13 @@
 }
 
 @media (max-width: 768px) {
+    .tracker-container {
+        padding: 16px;
+    }
+
     .card {
         height: min-content;
+        padding: 18px;
     }
 
     .food-items-grid {
@@ -796,7 +801,11 @@
     }
 
     .digit-display {
-        font-size: 2.9rem;
+        font-size: 2.5rem;
+    }
+
+    .digit-value {
+        font-size: 2.5rem;
     }
 
     .product-container {
@@ -849,10 +858,11 @@
     }
 
     .header h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
     .card-title {
+        font-size: 1.5rem;
         margin-bottom: 10px;
     }
 
@@ -882,5 +892,64 @@
     .insulin-summary {
         padding: 20px;
     }
+}
 
+@media (max-width: 480px) {
+    .tracker-container {
+        padding: 10px;
+    }
+
+    .card {
+        padding: 14px;
+    }
+
+    .header h1 {
+        font-size: 1.4rem;
+    }
+
+    .card-title {
+        font-size: 1.3rem;
+    }
+
+    .digit-display {
+        font-size: 2rem;
+        min-height: 3rem;
+    }
+
+    .digit-value {
+        font-size: 2rem;
+    }
+
+    .digit-btn {
+        font-size: 16px;
+    }
+
+    .digit-label {
+        font-size: 0.9em;
+    }
+
+    .summary-value {
+        font-size: 1.6em;
+    }
+
+    .summary-title {
+        font-size: 1.4em;
+    }
+
+    .summary-item {
+        padding: 14px 10px;
+    }
+
+    .insulin-summary {
+        padding: 16px;
+    }
+
+    .btn {
+        padding: 10px 16px;
+        font-size: 15px;
+    }
+
+    .grid-container {
+        gap: 12px;
+    }
 }
